@@ -1,0 +1,22 @@
+1. สร้าง vitual venv ก่อน 
+python -m venv .venv
+
+2.เข้าถึง vitual venv 
+.\.venv\Scripts\Activate.ps1
+
+3.ติดตั้งไลบรารีที่ใช้งานในโปรเจค (หลังเปิดใช้ .venv แล้ว)
+pip install -r requirements.txt
+
+4.รัน Backend 
+  4.1 เข้าถึง folder backend ผ่าน คำสั่ง cd  กด click ขวาที่ folder :Coral-dashboard-main เเล้ว copy path จากนั้นวางบน terminal จะได้ 
+  cd C:\Users\thong\Downloads\Coral-dashboard-main\Coral-dashboard-main
+  4.2 จากนั้นคำสั่งรัน backend   จะได้
+   uvicorn main:app --reload
+
+5.รัน Font end (ต้อง new terminal ที่ด้านบน)
+5.1 เข้าถึง path ของ folder webapp ด้วยคำสั่ง cd เหมือนกัน จะได้
+ cd C:\Users\thong\Downloads\Coral-dashboard-main\Coral-dashboard-main\webapp
+5.2 จากนั้นรันคำสั่ง font end จะได้
+npm run dev
+
+

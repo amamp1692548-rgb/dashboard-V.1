@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+.env
+
+# Next.js / Node.js
+webapp/node_modules/
+webapp/.next/
+webapp/out/
+webapp/build/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Images / Media (Optional, but usually you don't push heavy images unless needed)
+# *.png
+# *.jpg
+# *.pdf
