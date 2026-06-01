@@ -20,9 +20,8 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     let reconnectTimer: NodeJS.Timeout;
     let pollingTimer: NodeJS.Timeout;
 
-    const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-    const wsUrl = `ws://${host}:8000/ws`;
-    const dashboardUrl = `http://${host}:8000/dashboard`;
+    const wsUrl = 'wss://my-dashboard-backend-se3n.onrender.com/ws';
+    const dashboardUrl = 'https://my-dashboard-backend-se3n.onrender.com/dashboard';
 
     const loadInitialData = async () => {
       try {
