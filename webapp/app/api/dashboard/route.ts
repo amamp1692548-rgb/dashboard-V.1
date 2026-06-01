@@ -1,31 +1,23 @@
 import { NextResponse } from 'next/server';
-import mysql from 'mysql2/promise';
 
 export async function GET() {
   try {
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      port: 3307,
-      user: 'root',
-      password: '',
-      database: 'coral_dashboard',
+    // ดึงข้อมูลผ่านหลังบ้านบน Render แทนการต่อ MySQL ตรงๆ ในเครื่อง
+    const response = await fetch('https://my-dashboard-backend-se3n.onrender.com/dashboard', {
+      cache: 'no-store' // บังคับให้ดึงข้อมูลใหม่เสมอ ไม่ใช้ข้อมูลเก่าที่ค้างไว้
     });
+
+    if (!response.ok) {
+      throw new Error(`Backend responded with status: ${response.status}`);
+    }
+
+    const data = await response.json();
     
-    const [kpiRows] = await connection.execute('SELECT * FROM kpi_data ORDER BY id ASC');
-    const [profitLossRows] = await connection.execute('SELECT * FROM profit_loss ORDER BY id ASC');
-    const [productSaleRows] = await connection.execute('SELECT * FROM product_sale ORDER BY id ASC');
-    const [mapRows] = await connection.execute('SELECT * FROM reef_locations ORDER BY id ASC');
-    
-    await connection.end();
-    
-    return NextResponse.json({
-      kpi: kpiRows,
-      profitLoss: profitLossRows,
-      productSale: productSaleRows,
-      mapData: mapRows
-    });
+    // ส่งข้อมูลกลับไปให้หน้าแดชบอร์ดตามโครงสร้างเดิม
+    return NextResponse.json(data);
+
   } catch (error) {
-    console.error("Database error:", error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    console.error("Database/Backend error:", error);
+    return NextResponse.json({ error: 'Failed to fetch dataจาก Render' }, { status: 500 });
   }
 }
