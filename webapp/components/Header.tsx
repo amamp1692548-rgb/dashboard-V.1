@@ -42,7 +42,7 @@ export default function Header({ availableLocations, setRegion }: HeaderProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            Welcome back, Miguel! <span>👋 🐬</span>
+            Coral Blue Matriix
           </h1>
           <p className="text-sm text-slate-200 mt-1 font-medium opacity-100">Ecosystem Analytics Dashboard 🌊</p>
         </div>

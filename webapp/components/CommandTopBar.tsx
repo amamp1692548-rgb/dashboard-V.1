@@ -49,7 +49,7 @@ export default function CommandTopBar() {
           }}>
             <img 
               src="/picture/Logo coral blue matrix.png" 
-              alt="Coral blumatriix Logo" 
+              alt="Coral Blue Matriix Logo" 
               style={{ width: "100%", height: "100%", objectFit: "contain" }} 
             />
           </div>
@@ -62,7 +62,7 @@ export default function CommandTopBar() {
               letterSpacing: "0.05em", 
               lineHeight: 1.2 
             }}>
-              Coral blumatriix
+              Coral Blue Matriix
             </div>
             <div style={{ 
               fontSize: 10, 
