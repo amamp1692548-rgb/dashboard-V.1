@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    // เปลี่ยนมาดึงข้อมูลผ่านหลังบ้านบน Render (เปลี่ยนเส้นทางท้ายลิงก์เป็น /sales)
-    const response = await fetch('https://my-dashboard-backend-se3n.onrender.com/sales', {
-      cache: 'no-store' // บังคับให้ดึงข้อมูลใหม่ล่าสุดเสมอ
+    // แก้ไขตรงนี้: วิ่งไปดึงจากท่อ /dashboard แทน เพื่อไม่ให้เจอ 404
+    const response = await fetch('https://my-dashboard-backend-se3n.onrender.com/dashboard', {
+      cache: 'no-store'
     });
 
     if (!response.ok) {
@@ -13,11 +13,12 @@ export async function GET() {
 
     const data = await response.json();
     
-    // ส่งข้อมูลยอดขายกลับไปให้หน้าแดชบอร์ด
+    // โค้ดเดิมฝั่งหน้าบ้านของคุณอาจจะต้องการแค่ส่วนของ productSale
+    // ถ้าหน้าจอแสดงผลมีปัญหา ให้ลองใช้บรรทัดนี้: return NextResponse.json(data.productSale || data);
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error("Database/Backend error in sales route:", error);
-    return NextResponse.json({ error: 'Failed to fetch sales data จาก Render' }, { status: 500 });
+    console.error("Backend error in sales route:", error);
+    return NextResponse.json({ error: 'Failed to fetch sales data' }, { status: 500 });
   }
 }
