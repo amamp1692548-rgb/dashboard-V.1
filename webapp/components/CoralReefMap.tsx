@@ -118,7 +118,35 @@ export default function CoralReefMap({
   const [internalSelectedNode, setInternalSelectedNode] = useState<any>(null);
   const [isStreamOpen, setIsStreamOpen] = useState(false);
   const { data } = useWebSocketData();
-  const nodes: any[] = data?.dashboard?.mapData || [];
+  const nodesRaw: any[] = data?.dashboard?.mapData || [];
+  // Ensure offline nodes display zeroed metrics on the map
+  const nodes: any[] = nodesRaw.map(n => {
+    const isOffline = n.status === "Offline" || !n.status || String(n.status).toLowerCase().includes("ออฟไลน์") || String(n.status).toLowerCase().includes("offline");
+    if (!isOffline) return n;
+    return {
+      ...n,
+      health_score: 0,
+      predictions: {
+        bleaching: 0,
+        sedimentation: 0,
+        chemical: 0,
+        normal: 0
+      },
+      battery: 0,
+      signal: 0,
+      last_sync: "--",
+      spectral_raw: [],
+      temperature: 0,
+      turbidity: 0,
+      salinity: 0,
+      ph: 0,
+      dissolved_oxygen: 0,
+      bleaching_probability: 0,
+      stress_level: 0,
+      color_degradation_index: 0,
+      depth: 0
+    };
+  });
 
   const activeNode = selectedNode || internalSelectedNode;
 

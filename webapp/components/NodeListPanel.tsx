@@ -176,13 +176,13 @@ function NodeCard({ node, onSelectNode }: { node: any, onSelectNode?: (node: any
         {node.node_id} · {node.location} · {node.lat.toFixed(6)}, {node.lng.toFixed(6)}
       </div>
 
-      {!isOffline && node.health_score !== null && (
+      {(node.health_score !== null || isOffline) && (
         <div style={{ marginBottom: 4 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "var(--text-muted)", marginBottom: 2 }}>
             <span>Health</span>
-            <span className="font-mono" style={{ color: statusColor }}>{node.health_score}</span>
+            <span className="font-mono" style={{ color: statusColor }}>{isOffline ? 0 : node.health_score}</span>
           </div>
-          <MiniBar value={node.health_score} color={statusColor} />
+          <MiniBar value={isOffline ? 0 : node.health_score} color={statusColor} />
         </div>
       )}
 
