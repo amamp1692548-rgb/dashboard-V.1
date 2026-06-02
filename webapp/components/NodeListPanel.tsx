@@ -233,6 +233,65 @@ function NodeCard({ node, onSelectNode }: { node: any, onSelectNode?: (node: any
 export default function NodeListPanel({ onSelectNode }: { onSelectNode?: (node: any) => void }) {
   const { data } = useWebSocketData();
   const nodes: any[] = data?.dashboard?.mapData || [];
+  // Simulated AS7263-like spectral values for Node 1.
+  // We'll update this every 2s and inject into the rendered node data so
+  // the element with id="#node-1-raw" shows live-changing numbers.
+  const [node1Spectral, setNode1Spectral] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    const base = {
+      "610nm": 2.58,
+      "680nm": 23.03,
+      "730nm": 310.4,
+      "760nm": 180.5,
+      "810nm": 9.12,
+      "860nm": 3.64,
+    };
+    // user-specified centers (nearest tens / preferred values)
+    const centerValues = [56, 45, 69, 73, 25, 9];
+    // per-update step magnitude (±stepRange)
+    const stepRange = 2; // user asked to reduce/increase; default reduced to ±2
+
+    function generateSample(prev: any[] | null) {
+      const bands = ["610nm", "680nm", "730nm", "760nm", "810nm", "860nm"];
+      return bands.map((b, idx) => {
+        // use provided center value for this band
+        const baseTens = centerValues[idx] ?? Math.round(Math.round(base[b] / 10) * 10);
+
+        // compute offset based on previous value to reduce swing
+        let offset = 0;
+        if (prev && prev[idx]) {
+          offset = prev[idx].value - baseTens;
+          // small step change to offset: -stepRange..+stepRange
+          offset = offset + (Math.floor(Math.random() * (stepRange * 2 + 1)) - stepRange);
+          // clamp offset so it doesn't drift wildly: keep within ±(stepRange*6)
+          offset = Math.max(-stepRange * 6, Math.min(stepRange * 6, offset));
+        } else {
+          // initial offset small: -stepRange*3 .. +stepRange*3
+          offset = Math.floor(Math.random() * (stepRange * 6 + 1)) - stepRange * 3;
+        }
+
+        // very rare large spike (100..150) with 1% probability
+        const spike = Math.random() < 0.01 ? (100 + Math.floor(Math.random() * 51)) : 0;
+
+        const v = Math.max(1, baseTens + offset + spike);
+        return { band: b, value: v };
+      });
+    }
+
+    // initialize from incoming data if available (round to integers)
+    const initial = nodes?.find(n => n.id === 1)?.spectral_raw;
+    if (initial && initial.length) {
+      setNode1Spectral(initial.map((d: any) => ({ band: d.band, value: Math.round(Number(d.value)) })));
+    } else setNode1Spectral(generateSample(null));
+
+    const iv = setInterval(() => {
+      setNode1Spectral(prev => generateSample(prev || null));
+    }, 2000);
+
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [/* run once and when nodes array reference changes */ JSON.stringify(nodes.map(n => n.id))]);
   
   const [expandedRegions, setExpandedRegions] = useState<Record<string, boolean>>({
     "ฝั่งอันดามันตอนเหนือ": true // Default open one for demo
@@ -355,6 +414,11 @@ export default function NodeListPanel({ onSelectNode }: { onSelectNode?: (node: 
                               nodeData.signal = 0;
                               nodeData.last_sync = "--";
                               nodeData.spectral_raw = [];
+                            }
+                            // For Node 1, inject the simulated spectral values so the
+                            // rendered element (#node-1-raw) updates from React state.
+                            if (nodeData.id === 1) {
+                              nodeData.spectral_raw = node1Spectral || nodeData.spectral_raw || [];
                             }
                             return <NodeCard key={`active-${item.id}`} node={nodeData} onSelectNode={onSelectNode} />;
                           } else {
